@@ -82,6 +82,8 @@ This library integrates and provides a common interface to the following algorit
 - Generalized Network Dismantling (GND): [reference](CITATIONS.md#generalized-network-dismantling-gnd)
 - [Graph Dismantling Machine (GDM)](https://github.com/renxiaolong/Generalized-Network-Dismantling): [reference](CITATIONS.md#graph-dismantling-machine-gdm)
 - [Min-Sum](https://github.com/abraunst/decycler/): [reference](CITATIONS.md#min-sum-ms--greedy-reinsertion-algorithm)
+- NetworkEntanglement: [reference](CITATIONS.md#network-entanglement-ne)
+- [VertexEntanglement](https://github.com/Yiminghh/VertexEntanglement): [reference](CITATIONS.md#vertex-entanglement-ve)
 - Node heuristics (to be integrated in the main dismantler, need to use the separate script for now)
     - Degree
     - Betweenness
@@ -139,7 +141,7 @@ You can find them in their sub-folders.
 #### All algorithms except FINDER and GDM
 
 ```bash
-conda create -n dismantling python=3.9 boost boost-cpp graph-tool dill tqdm numpy scipy pandas seaborn matplotlib -c anaconda -c conda-forge
+conda create -n dismantling python=3.9 boost boost-cpp graph-tool dill tqdm numpy scipy pandas seaborn matplotlib parse pyyaml -c anaconda -c conda-forge
 
 conda activate dismantling
 ```
@@ -152,7 +154,7 @@ Please refer to the [PyTorch installation matrix](https://pytorch.org/get-starte
 
 Just as an example, if your host machine supports CUDA (11.8), the command should look like the following:
 ```bash
-conda create --name gdm boost boost-cpp graph-tool dill tqdm numpy scipy pandas seaborn matplotlib python pytorch torchvision torchaudio pytorch-cuda=11.8 pyg -c pyg -c pytorch -c nvidia -c conda-forge -c anaconda
+conda create --name gdm boost boost-cpp graph-tool dill tqdm numpy scipy pandas seaborn matplotlib python parse pyyaml pytorch torchvision torchaudio pytorch-cuda=11.8 pyg -c pyg -c pytorch -c nvidia -c conda-forge -c anaconda
 
 conda activate gdm
 ```

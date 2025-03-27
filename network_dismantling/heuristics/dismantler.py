@@ -8,7 +8,7 @@ from types import GeneratorType
 
 import numpy as np
 import pandas as pd
-from scipy.integrate import simps
+from scipy.integrate import simpson
 from tqdm.auto import tqdm
 
 from network_dismantling.common.dataset_providers import list_files, init_network_provider
@@ -224,7 +224,7 @@ def main(args):
                                                                                               "STATIC" if mode is True else "DYNAMIC") + " " + display_name,
                                                                                           stop_condition,
                                                                                           stop_condition / network_size))
-                removals, prediction_time, dismantle_time = dismantler(network=network.copy(),
+                removals, prediction_time, dismantle_time, _ = dismantler(network=network.copy(),
                                                                        predictor=generator,
                                                                        generator_args=generator_args,
                                                                        stop_condition=stop_condition,
@@ -240,7 +240,7 @@ def main(args):
                     "slcc_size_at_peak": peak_slcc[4],
                     "heuristic": heuristic,
                     "static": mode,
-                    "r_auc": simps(list(r[3] for r in removals), dx=1)
+                    "r_auc": simpson(list(r[3] for r in removals), dx=1)
                 }
 
                 runs.append(run)
