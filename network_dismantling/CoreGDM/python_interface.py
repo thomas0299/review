@@ -334,45 +334,64 @@ def _CoreGDM(network: Graph,
                        network=network,
                        logger=logger,
                        )
+    run_reinsert = False
+    
+    if run_reinsert:
+        # Run the reinsertion script
+        reinsertion_args = reinsert_parse_parameters(parse_string=default_reinsertion_params.split())
+        reinsertion_args.file = args.output_file
+        reinsertion_args.location_test = args.location_test
+        reinsertion_args.test_filter = f"{network_name}"
+        reinsertion_args.output_file = extend_filename(reinsertion_args.file, f"_reinserted")
 
-    # Run the reinsertion script
-    reinsertion_args = reinsert_parse_parameters(parse_string=default_reinsertion_params.split())
-    reinsertion_args.file = args.output_file
-    reinsertion_args.location_test = args.location_test
-    reinsertion_args.test_filter = f"{network_name}"
-    reinsertion_args.output_file = extend_filename(reinsertion_args.file, f"_reinserted")
+        logger.debug("Reinsert parameters:"
+                    f"\n\tFile: {reinsertion_args.file}"
+                    f"\n\tLocation test: {reinsertion_args.location_test}"
+                    f"\n\tTest filter: {reinsertion_args.test_filter}"
+                    f"\n\tOutput file: {reinsertion_args.output_file}"
+                    f"\n\tDF: {new_df_runs}")
 
-    logger.debug("Reinsert parameters:"
-                 f"\n\tFile: {reinsertion_args.file}"
-                 f"\n\tLocation test: {reinsertion_args.location_test}"
-                 f"\n\tTest filter: {reinsertion_args.test_filter}"
-                 f"\n\tOutput file: {reinsertion_args.output_file}"
-                 f"\n\tDF: {new_df_runs}")
+        # TODO: Fix this...
+        #  This will load the whole DF again for every new network we test... :(
+        try:
+            reinsert(args=reinsertion_args,
+                    # df=new_df_runs,
+                    test_networks={network_name: network},
+                    logger=logger,
+                    )
+        except FileNotFoundError as e:
+            raise RuntimeError(f"File {reinsertion_args.file} was not generated. Something went wrong. ")
 
-    # TODO: Fix this...
-    #  This will load the whole DF again for every new network we test... :(
-    try:
-        reinsert(args=reinsertion_args,
-                 # df=new_df_runs,
-                 test_networks={network_name: network},
-                 logger=logger,
-                 )
-    except FileNotFoundError as e:
-        raise RuntimeError(f"File {reinsertion_args.file} was not generated. Something went wrong. ")
+        reinsertion_output_df_file = reinsertion_args.output_file
 
-    reinsertion_output_df_file = reinsertion_args.output_file
+        reinsert_df = df_reader(reinsertion_output_df_file,
+                                include_removals=True,
+                                )
+        run_extractor_params.file = reinsertion_output_df_file
+        run_extractor_params.query = f"network == '{network_name}'"
+        best_reinsertion_runs = best_run_extractor(args=run_extractor_params,
+                                                df=reinsert_df,
+                                                heuristic_name="CoreGDM"
+                                                )
 
-    reinsert_df = df_reader(reinsertion_output_df_file,
-                            include_removals=True,
-                            )
-    run_extractor_params.file = reinsertion_output_df_file
-    run_extractor_params.query = f"network == '{network_name}'"
-    best_reinsertion_runs = best_run_extractor(args=run_extractor_params,
-                                               df=reinsert_df,
-                                               heuristic_name="CoreGDM"
-                                               )
+        return best_reinsertion_runs
+    else:
+        # Get the best solution for the current network
+        output_df_file = args.output_file
 
-    return best_reinsertion_runs
+        df = df_reader(
+            output_df_file,
+            include_removals=True,
+        )
+
+        run_extractor_params.file = output_df_file
+        best_runs = best_run_extractor(
+            args=run_extractor_params,
+            df=df,
+            heuristic_name="CoreGDM",
+        )
+        return best_runs
+        
 
 
 method_info = dict(

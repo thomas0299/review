@@ -542,75 +542,75 @@ void FVS::ComponentRefinement(int Sthreshold, string &outfile) {
             }
         }
     //        add some vertices to small components and/or merge small components
-    max_comp_size = 0;
-    int NumberAddition = 0;
-    set<IntPair> candidates;
-    v_ptr = &Vertex[1];
-    for (int v = 1; v <= VertexNumber; ++v, ++v_ptr)
-        if (v_ptr->c_index == 0) {
-            set<int> cgroups;
-            int vtx = v_ptr->index;
-            om_ptr = v_ptr->om_ptr;
-            for (int d = 0; d < v_ptr->degree; ++d, ++om_ptr) {
-                int vtx2 = om_ptr->v_ptr->index;
-                if (Vertex[vtx2].c_index != 0)
-                    cgroups.insert(Vertex[vtx2].c_index);
-            }
-            c_size = 1;
-            for (int cgroup: cgroups)
-                c_size += Permutation[cgroup];
-            if (c_size <= Sthreshold)
-                candidates.insert(IntPair(c_size, vtx));
-        }
-    while (!candidates.empty()) {
-        c_index = 0;
-        auto sci = candidates.begin();
-        int csize0 = sci->first;
-        int vtx = sci->second;
-        candidates.erase(IntPair(csize0, vtx));
-        set<int> cgroups;
-        om_ptr = Vertex[vtx].om_ptr;
-        for (int d = 0; d < Vertex[vtx].degree; ++d, ++om_ptr) {
-            int vtx2 = om_ptr->v_ptr->index;
-            if (Vertex[vtx2].c_index != 0) {
-                cgroups.insert(Vertex[vtx2].c_index);
-                if (c_index < Vertex[vtx2].c_index)
-                    c_index = Vertex[vtx2].c_index;
-            }
-        }
-        c_size = 1;
-        for (int cgroup: cgroups)
-            c_size += Permutation[cgroup];
-        if (c_size <= Sthreshold) {
-            if (c_size > csize0)
-                candidates.insert(IntPair(c_size, vtx));
-            else {
-                ++NumberAddition;
-                Vertex[vtx].occupied = true;
-                --num_empty;
-                Permutation[c_index] = c_size;
-                if (max_comp_size < c_size)
-                    max_comp_size = c_size;
-                queue<int> members;
-                members.push(vtx);
-                Vertex[vtx].c_index = c_index;
-                while (!members.empty()) {
-                    int vtx2 = members.front();
-                    members.pop();
-                    om_ptr = Vertex[vtx2].om_ptr;
-                    for (int d = 0; d < Vertex[vtx2].degree; ++d, ++om_ptr) {
-                        int vtx3 = om_ptr->v_ptr->index;
-                        if (Vertex[vtx3].c_index != c_index &&
-                            Vertex[vtx3].occupied) {
-                            Permutation[Vertex[vtx3].c_index] = 0;
-                            Vertex[vtx3].c_index = c_index;
-                            members.push(vtx3);
-                        }
-                    }
-                }
-            }
-        }
-    }
+    // max_comp_size = 0;
+    // int NumberAddition = 0;
+    // set<IntPair> candidates;
+    // v_ptr = &Vertex[1];
+    // for (int v = 1; v <= VertexNumber; ++v, ++v_ptr)
+    //     if (v_ptr->c_index == 0) {
+    //         set<int> cgroups;
+    //         int vtx = v_ptr->index;
+    //         om_ptr = v_ptr->om_ptr;
+    //         for (int d = 0; d < v_ptr->degree; ++d, ++om_ptr) {
+    //             int vtx2 = om_ptr->v_ptr->index;
+    //             if (Vertex[vtx2].c_index != 0)
+    //                 cgroups.insert(Vertex[vtx2].c_index);
+    //         }
+    //         c_size = 1;
+    //         for (int cgroup: cgroups)
+    //             c_size += Permutation[cgroup];
+    //         if (c_size <= Sthreshold)
+    //             candidates.insert(IntPair(c_size, vtx));
+    //     }
+    // while (!candidates.empty()) {
+    //     c_index = 0;
+    //     auto sci = candidates.begin();
+    //     int csize0 = sci->first;
+    //     int vtx = sci->second;
+    //     candidates.erase(IntPair(csize0, vtx));
+    //     set<int> cgroups;
+    //     om_ptr = Vertex[vtx].om_ptr;
+    //     for (int d = 0; d < Vertex[vtx].degree; ++d, ++om_ptr) {
+    //         int vtx2 = om_ptr->v_ptr->index;
+    //         if (Vertex[vtx2].c_index != 0) {
+    //             cgroups.insert(Vertex[vtx2].c_index);
+    //             if (c_index < Vertex[vtx2].c_index)
+    //                 c_index = Vertex[vtx2].c_index;
+    //         }
+    //     }
+    //     c_size = 1;
+    //     for (int cgroup: cgroups)
+    //         c_size += Permutation[cgroup];
+    //     if (c_size <= Sthreshold) {
+    //         if (c_size > csize0)
+    //             candidates.insert(IntPair(c_size, vtx));
+    //         else {
+    //             ++NumberAddition;
+    //             Vertex[vtx].occupied = true;
+    //             --num_empty;
+    //             Permutation[c_index] = c_size;
+    //             if (max_comp_size < c_size)
+    //                 max_comp_size = c_size;
+    //             queue<int> members;
+    //             members.push(vtx);
+    //             Vertex[vtx].c_index = c_index;
+    //             while (!members.empty()) {
+    //                 int vtx2 = members.front();
+    //                 members.pop();
+    //                 om_ptr = Vertex[vtx2].om_ptr;
+    //                 for (int d = 0; d < Vertex[vtx2].degree; ++d, ++om_ptr) {
+    //                     int vtx3 = om_ptr->v_ptr->index;
+    //                     if (Vertex[vtx3].c_index != c_index &&
+    //                         Vertex[vtx3].occupied) {
+    //                         Permutation[Vertex[vtx3].c_index] = 0;
+    //                         Vertex[vtx3].c_index = c_index;
+    //                         members.push(vtx3);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
     ofstream pfile(outfile.c_str());
     pfile << "Targets  " << num_empty << endl
           << endl;

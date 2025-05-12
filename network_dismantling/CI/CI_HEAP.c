@@ -603,18 +603,30 @@ int_t *get_influencers(varNode *Node, int_t N, int_t **Graph, int L, int_t STOP_
 
     fprintf(stdout, "\t\t\t\t### FINISHING ###\n\n");
 
+    fprintf(stdout, "\n### NODES TO BE REMOVED BEFORE REINSERTION (REMOVED) ###\n\n");
+    for (int_t i = 1; i <= listNodeRemoved[0]; i++) {
+        fprintf(stdout, "%ld ", listNodeRemoved[i]);
+    }
+    fprintf(stdout, "\n\n");
     //with reinsertion
     listInfluencers = reinsert(Node, cnt, listNodeRemoved, N, Graph);
 //    return listNodeRemoved;
 
-    //without reinsertion
-    /*
-    listInfluencers = (int_t *)calloc(cnt+1, sizeof(int_t));
-    for(i = 1; i <= cnt; i++)
-        listInfluencers[i]  = listNodeRemoved[i-1];
-    listInfluencers[0] = cnt;
-     */
+//without reinsertion
+    
+    // listInfluencers = (int_t *)calloc(cnt+1, sizeof(int_t));
+    // for(i = 1; i <= cnt; i++)
+    //     listInfluencers[i]  = listNodeRemoved[i-1];
+    // listInfluencers[0] = cnt;
+    
     ///////////////
+
+    fprintf(stdout, "\n### NODES TO BE REMOVED AFTER REINSERTION (INFLUENCERS) ###\n\n");
+    for (int_t i = 1; i <= listInfluencers[0]; i++) {
+        fprintf(stdout, "%ld ", listInfluencers[i]);
+    }
+    fprintf(stdout, "\n\n");
+    
 
     free(queue);
     free(check);
